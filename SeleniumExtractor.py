@@ -18,6 +18,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
+from vector_db import process_documents, create_vector_database, semantic_search, display_results, process_markdown_content
 
 
 class SeleniumExtractor:
@@ -334,12 +335,10 @@ def main():
         "https://www.python.org/about/",
         "https://en.wikipedia.org/wiki/Web_scraping"
     ]
-    
-    # Process URLs
-    print("Fetching and processing URLs using Selenium with markdownify... (this may take a moment)")
+
     markdown_contents = extractor.process_urls(urls)
-    
-    # Display results
+    query = "Qu'est-ce qu'un système de caisse"
+    process_markdown_content(markdown_contents, query)
     if not markdown_contents:
         print("\nNo content could be extracted. All requests failed.")
     else:
