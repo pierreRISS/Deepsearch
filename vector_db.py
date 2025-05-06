@@ -114,6 +114,7 @@ def process_markdown_content(markdown_contents, query: str):
     print(f"DEBUG: Performing semantic search for query: {query}")
     results = semantic_search(collection, model, query)
     print(f"DEBUG: Semantic search results: {results}")
+    return results
 
     display_results(results)
 

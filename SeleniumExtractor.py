@@ -18,7 +18,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
-from vector_db import process_documents, create_vector_database, semantic_search, display_results, process_markdown_content
+from vector_db import process_markdown_content
 
 
 class SeleniumExtractor:
