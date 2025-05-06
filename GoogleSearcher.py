@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 # filepath: /home/spay/dev/poc/hackathon/hande/Deepsearch/GoogleSearcher.py
-from googlesearch import search
+from duckduckgo_search import DDGS
 import re
 from typing import List, Set, Optional
 
 
 class GoogleSearcher:
     """
-    A class to perform Google searches based on user queries and retrieve relevant URLs
+    A class to perform DuckDuckGo searches based on user queries and retrieve relevant URLs
     from specified domains.
     """
     
-    def __init__(self, target_domain: str = "https://www.economie.gouv.fr", 
+    def __init__(self, target_domain: str = "www.economie.gouv.fr", 
                  stop_words: Optional[Set[str]] = None,
                  default_lang: str = "fr",
                  default_pause: float = 2.0):
         """
-        Initialize the GoogleSearcher.
+        Initialize the Searcher.
         
         Args:
             target_domain: The domain to restrict search results to
@@ -66,7 +66,7 @@ class GoogleSearcher:
     
     def search(self, query: str, num_results: int = 3) -> List[str]:
         """
-        Search for relevant URLs based on a user query.
+        Search for relevant URLs based on a user query using DuckDuckGo.
         
         Args:
             query: The user query string
@@ -79,30 +79,25 @@ class GoogleSearcher:
         keywords = self.extract_keywords(query)
         search_query = self.construct_search_query(keywords)
         
-        # Perform Google search
+        # Perform DuckDuckGo search
         urls = []
         try:
-            # Note: The library parameter may be 'num' instead of 'num_results'
-            for url in search(search_query, num=num_results, 
-                             lang=self.default_lang, pause=self.default_pause):
-                # Ensure URL is from the target domain
-                if url.startswith(self.target_domain):
-                    urls.append(url)
-                if len(urls) >= num_results:
-                    break
+            with DDGS() as ddgs:
+                results = ddgs.text(
+                    search_query,
+                    region=self.default_lang,
+                    max_results=num_results
+                )
+                
+                for result in results:
+                    url = result['href']
+                    # Ensure URL is from the target domain
+                    if self.target_domain in url:
+                        urls.append(url)
+                    if len(urls) >= num_results:
+                        break
         except Exception as e:
-            print(f"Error during search: {e}")
-            # Try alternate parameter if first attempt failed
-            if "num_results" in str(e):
-                try:
-                    for url in search(search_query, tld="fr", lang=self.default_lang, 
-                                     pause=self.default_pause, stop=num_results):
-                        if url.startswith(self.target_domain):
-                            urls.append(url)
-                        if len(urls) >= num_results:
-                            break
-                except Exception as e2:
-                    print(f"Second attempt failed: {e2}")
+            print(f"Error during DuckDuckGo search: {e}")
         
         return urls
     
@@ -119,7 +114,6 @@ class GoogleSearcher:
         """
         results = {}
         for query in queries:
-            query = query + " site:" + self.target_domain
             urls = self.search(query, num_results_per_query)
             results[query] = urls
         return results

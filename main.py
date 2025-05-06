@@ -4,8 +4,9 @@ from extract_prompts import extract_reformulated_prompts
 # from text_to_markdown import summarize_and_convert_to_md, save_markdown_to_file
 from test_searcher import process_ai_generated_questions
 from SeleniumExtractor import SeleniumExtractor
-from GoogleSearcher import GoogleSearcher
+from GoogleSearcher import GoogleSearcher as DuckSearcher
 from vector_db import process_markdown_content
+from text_to_markdown import text_to_md
 import json
 import ast
 
@@ -15,14 +16,14 @@ if __name__ == "__main__":
     print("Testing Ollama with LangChain...")
     extractor = SeleniumExtractor(headless=True, wait_time=5, scroll_page=True)
     init_ollama()
-    google_searcher = GoogleSearcher()
+    google_searcher = DuckSearcher()
     ask = FiscGPT()
     # Test with default prompt
-    # sub_sujets = get_json_response(ask, "divider_subject")
+    sub_sujets = get_json_response(ask, "divider_subject")
 
     # Utilisation correcte d'un dictionnaire Python
-    sub_sujets_str = """{'Instruction originale': 'Tva sas ?', 'Découpe nécessaire': 'Oui', 'Sous-sujets': [{'Nom du sous-sujet': 'Analyse de la demande pour les téléphones solides en Europe', 'Prompt reformulé': "Analyse la demande actuelle et potentielle pour les téléphones dits 'solides' (résistants aux chocs, à l'eau, etc.) sur le marché européen : qui sont les utilisateurs cibles, quels sont leurs besoins spécifiques, quelles tendances peut-on observer ?"}, {'Nom du sous-sujet': "Analyse de l'offre existante et de la concurrence", 'Prompt reformulé': 'Identifie les principaux acteurs proposant des téléphones solides en Europe, leurs caractéristiques produits, gammes de prix, stratégies marketing et parts de marché.'}]}"""
-    sub_sujets = ast.literal_eval(sub_sujets_str)
+    # sub_sujets_str = """{'Instruction originale': 'Tva sas ?', 'Découpe nécessaire': 'Oui', 'Sous-sujets': [{'Nom du sous-sujet': 'Analyse de la demande pour les téléphones solides en Europe', 'Prompt reformulé': "Analyse la demande actuelle et potentielle pour les téléphones dits 'solides' (résistants aux chocs, à l'eau, etc.) sur le marché européen : qui sont les utilisateurs cibles, quels sont leurs besoins spécifiques, quelles tendances peut-on observer ?"}, {'Nom du sous-sujet': "Analyse de l'offre existante et de la concurrence", 'Prompt reformulé': 'Identifie les principaux acteurs proposant des téléphones solides en Europe, leurs caractéristiques produits, gammes de prix, stratégies marketing et parts de marché.'}]}"""
+    # sub_sujets = ast.literal_eval(sub_sujets_str)
     
     print("sub_sujets", sub_sujets)
     # sub_sujets = sub_sujets["requêtes"]
@@ -33,7 +34,8 @@ if __name__ == "__main__":
         urls = google_searcher.batch_search(requettes)
         print("urls", urls)
         markdown_contents = extractor.process_urls(urls)
-        process_markdown_content(markdown_contents, markdown_contents)
+        ret = process_markdown_content(markdown_contents, markdown_contents)
+        text_to_md(ret)
         # prompts = extract_reformulated_prompts(test_ollama_chain(ask, "divider_subject"))
         # query_search = test_ollama_chain(ask, "Divider_prompt")
 

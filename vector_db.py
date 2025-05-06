@@ -116,7 +116,6 @@ def process_markdown_content(markdown_contents, query: str):
     print(f"DEBUG: Semantic search results: {results}")
     return results
 
-    display_results(results)
 
 def main():
     # Télécharger les données NLTK
