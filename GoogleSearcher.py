@@ -11,7 +11,7 @@ class GoogleSearcher:
     from specified domains.
     """
     
-    def __init__(self, target_domain: str = "https://www.economie.gouv.fr/entreprises", 
+    def __init__(self, target_domain: str = "https://www.economie.gouv.fr", 
                  stop_words: Optional[Set[str]] = None,
                  default_lang: str = "fr",
                  default_pause: float = 2.0):
@@ -119,6 +119,7 @@ class GoogleSearcher:
         """
         results = {}
         for query in queries:
+            query = query + " site:" + self.target_domain
             urls = self.search(query, num_results_per_query)
             results[query] = urls
         return results

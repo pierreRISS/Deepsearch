@@ -8,3 +8,4 @@ beautifulsoup4
 markdownify
 requests
 python-dotenv
+sentence_transformers
